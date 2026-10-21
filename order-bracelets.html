@@ -924,8 +924,8 @@ fbq('track', 'PageView');
 
       .wa-fab__btn {
         position: relative;
-        width: 56px;
-        height: 56px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         background: rgba(36, 50, 71, 0.65);
         backdrop-filter: blur(8px);
@@ -945,8 +945,8 @@ fbq('track', 'PageView');
       }
 
       .wa-fab__btn svg {
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
         fill: #25D366;
       }
 
@@ -1248,9 +1248,10 @@ fbq('track', 'PageView');
     <script>
       var CART_KEY = 'orzi_cart';
 
+      var SHIPPING_STANDARD = 65;
+      var SHIPPING_REMOTE = 88;
+
       var SHIPPING_RATES = {
-        'القاهرة': 99,
-        'الجيزة': 99,
         'الإسكندرية': 105,
         'القليوبية': 105,
         'الدقهلية': 110,
@@ -1278,9 +1279,22 @@ fbq('track', 'PageView');
         'الوادي الجديد': 210
       };
 
+      var REMOTE_AREAS = {
+        'القاهرة': ['التجمع الخامس', 'التجمع الأول', 'الشروق', 'بدر', 'العاصمة الإدارية', 'المطرية'],
+        'الجيزة': ['أكتوبر', 'الشيخ زايد', 'الصف', 'العياط', 'حدائق الأهرام']
+      };
+
       function getShippingCost() {
         var gov = document.getElementById('governorate');
+        var area = document.getElementById('area');
         if (!gov || !gov.value) return 0;
+
+        if (gov.value === 'القاهرة' || gov.value === 'الجيزة') {
+          var selectedArea = area ? area.value : '';
+          var remote = REMOTE_AREAS[gov.value] || [];
+          return remote.indexOf(selectedArea) >= 0 ? SHIPPING_REMOTE : SHIPPING_STANDARD;
+        }
+
         return SHIPPING_RATES[gov.value] || 0;
       }
 
@@ -1674,6 +1688,7 @@ fbq('track', 'PageView');
 
       areaSelect.addEventListener('change', function() {
         clearError('areaError');
+        renderCart();
       });
 
       /* Initial render */
